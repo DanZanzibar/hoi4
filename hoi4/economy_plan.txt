@@ -1,0 +1,27 @@
+Production bonuses will need to be scheduled into the game - likely a dictionary of dates:bonuses-to-add. 
+
+Breakdown of what impacts the different factories:
+
+Civs:
+    Consumer Goods - Available Civs
+        Economic Law
+        Stability
+        Total 
+    Factory output
+    Construction Speed
+        Economic Law
+        Construction Tech
+        Conscription Law
+
+... on second thought let's just start with the Mils and Dyds.
+
+Mils:
+    Production Cap
+        Technology
+        Focus Tree
+    Factory Output
+        Technology
+        Focus Tree
+        Stability
+    Resources
+        Need to test out precisely how it works.
