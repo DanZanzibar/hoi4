@@ -1,26 +1,14 @@
-civ_base = 5
+import forces
+from datetime import date
+
 mil_base = 4.5
 dyd_base = 2.5
-
-con_costs = {
-    'CIV': 10800,
-    'MIL': 7200,
-    'DYD': 6400,
-    'SYNR': 14500,
-    'FUEL': 5000,
-    'ROCK': 6400,
-    'NUKE': 30000
-}
-
-research = {
-
-}
 
 
 class Mil:
 		
-	def __init__(self, equipment, prod_eff, prod_cap, fact_out):
-		self.equip = equipment
+	def __init__(self, init_date, prod_eff, prod_cap, fact_out):
+		self.init_date = init_date
 		self.prod_eff = prod_eff
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
@@ -28,10 +16,8 @@ class Mil:
 		
 	def daily_prod(self):
 		output_IC = self.fact_out * self.prod_eff * mil_base
-		equip_cost = self.equip.get_IC()
-		output_equip = output_IC / equip_cost
 		self.prod_eff_daily_gain()
-		return self.equip, output_equip
+		return output_IC
 		
 	def prod_eff_daily_gain(self):
 		if self.at_prod_cap == False:
@@ -41,36 +27,39 @@ class Mil:
 				self.at_prod_cap = True
 
 
+class Dyd:
+
+	def __init__(self, init_date, dyd_out) -> None:
+		self.init_date = init_date
+		self.dyd_out = dyd_out
+
+	def daily_prod(self):
+		output_IC = self.dyd_out * dyd_base
+		return output_IC
+
+
 class Economy:
 		
-	def __init__(self, date, mils, dyds, resources, stockpile, fact_out, prod_cap, base_prod_eff):
+	def __init__(self, date, mils_max, mils_base, dyds, base_prod, prod_cap, fact_out, dyd_out, bonus_sched):
 		self.date = date
-		self.mils = []
-		for entry in mils:
-			self.new_mils(*entry)
-		self.dyds = dyds
-		self.resources = resources
-		self.stockpile = stockpile
-		self.fact_out = fact_out
+		self.base_prod = base_prod
 		self.prod_cap = prod_cap
-		self.base_prod_eff = base_prod_eff
+		self.fact_out = fact_out
+		self.mils = []
+		self.new_mils(mils_max, 'max')
+		self.new_mils(mils_base)
+		self.dyd_out = dyd_out
+		self.dyds = []
 
-	def new_mils(self, num_of_mils, equip, curr_prod_eff=None):
+
+	def new_mils(self, num_of_mils, curr_prod_eff=None):
+		prod_eff = self.prod_cap if curr_prod_eff == 'max' else self.base_prod
 		for x in range(num_of_mils):
-			if curr_prod_eff:
-				prod_eff = self.prod_cap if curr_prod_eff == 'max' else curr_prod_eff
-			else:
-				prod_eff = self.base_prod_eff
-			self.mils.append(Mil(equip, prod_eff, self.prod_cap, self.fact_out))
+			self.mils.append(Mil(self.date, prod_eff, self.prod_cap, self.fact_out))
 
-	# def new_dyds(self, num_of_dyds, equip):
-	# 	for x in range(num_of_dyds):
-	# 		self.dyds.append(Dyd)
-
-	# def add_factories(self):
+	def new_dyds(self, num_of_dyds):
+		for x in range(num_of_dyds):
+			self.dyds.append(Dyd(self.date, self.dyd_out))
 			
 	def advance_day(self):
-		self.add_bonuses()
-		self.add_factories()
-
-						
+		pass						
