@@ -42,21 +42,27 @@ class Dyd:
 
 class Production:
 		
-	def __init__(self, date, mils_max, mils_base, dyds, bonus_sched, base_prod, prod_cap, fact_out, dyd_out):
+	def __init__(self, date, mils, dyds, bonus_sched, base_prod=0.1, prod_cap0.5, fact_out=1, dyd_out=1):
 		self.date = date
 		self.bonus_sched = bonus_sched
 		self.base_prod = base_prod
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
 		self.mils = []
-		self.new_mils(mils_max, 'max')
-		self.new_mils(mils_base)
+		for entry in mils:
+			if isinstance(entry, int):
+				self.new_mils(entry)
+			else:
+				self.new_mils(*entry)
 		self.dyd_out = dyd_out
 		self.dyds = []
 		self.new_dyds(dyds)
 
 	def new_mils(self, num_of_mils, curr_prod_eff=None):
-		prod_eff = self.prod_cap if curr_prod_eff == 'max' else self.base_prod
+		if curr_prod_eff:
+			prod_eff = self.prod_cap if curr_prod_eff == 'max' else curr_prod_eff
+		else:
+			prod_eff = self.base_prod
 		for x in range(num_of_mils):
 			self.mils.append(Mil(self.date, prod_eff, self.prod_cap, self.fact_out))
 
