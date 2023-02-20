@@ -1,6 +1,8 @@
 import forces
-from datetime import date
+from datetime import date, timedelta
+from copy import deepcopy
 
+one_day_inc = timedelta(days=1)
 mil_base = 4.5
 dyd_base = 2.5
 
@@ -42,9 +44,10 @@ class Dyd:
 
 class Production:
 		
-	def __init__(self, date, mils, dyds, bonus_sched, base_prod=0.1, prod_cap0.5, fact_out=1, dyd_out=1):
+	def __init__(self, date, mils, dyds, bonus_sched, cons_sched, base_prod=0.1, prod_cap=0.5, fact_out=1, dyd_out=1):
 		self.date = date
 		self.bonus_sched = bonus_sched
+		self.cons_sched = cons_sched
 		self.base_prod = base_prod
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
@@ -57,6 +60,7 @@ class Production:
 		self.dyd_out = dyd_out
 		self.dyds = []
 		self.new_dyds(dyds)
+		self.start = deepcopy(self)
 
 	def new_mils(self, num_of_mils, curr_prod_eff=None):
 		if curr_prod_eff:
@@ -79,10 +83,30 @@ class Production:
 					self.base_prod += bonus
 				elif mod == 'cap_mod':
 					self.prod_cap += bonus
+					for mil in self.mils:
+						mil.prod_cap = self.prod_cap
 				elif mod == 'fact_mod':
 					self.fact_out += bonus
+					for mil in self.mils:
+						mil.fact_out = self.fact_out
 				elif mod == 'dyd_mod':
 					self.dyd_out += bonus
+					for dyd in self.dyds:
+						dyd.dyd_out = self.dyd_out
+
+	def update_cons(self):
+		if self.date in self.cons_sched:
+			mils, dyds = self.cons_sched[self.date]
+			if mils:
+				self.new_mils(mils)
+			if dyds:
+				self.new_dyds(dyds)
 			
 	def advance_day(self):
-		pass						
+		self.update_mods()
+		self.update_cons()
+		for mil in self.mils:
+			mil.daily_prod()
+		for dyd in self.dyds:
+			dyd.daily_prod()
+		self.date += one_day_inc
