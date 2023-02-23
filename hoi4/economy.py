@@ -110,3 +110,8 @@ class Production:
 		for dyd in self.dyds:
 			dyd.daily_prod()
 		self.date += one_day_inc
+
+	def advance_to_date(self, new_date):
+		num_days = (new_date - self.date).days
+		for day in range(num_days):
+			self.advance_day()
