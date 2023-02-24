@@ -11,6 +11,7 @@ class Mil:
 		
 	def __init__(self, init_date, prod_eff, prod_cap, fact_out):
 		self.init_date = init_date
+		self.init_eff = prod_eff
 		self.prod_eff = prod_eff
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
