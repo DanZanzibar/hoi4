@@ -8,12 +8,13 @@ dyd_base = 2.5
 
 class Mil:
 		
-	def __init__(self, init_date: date, prod_eff: float, prod_cap: float, fact_out: float):
+	def __init__(self, init_date: date, prod_eff, prod_cap, fact_out, start_maxed=False):
 		self.init_date = init_date
 		self.init_eff = prod_eff
 		self.prod_eff = prod_eff
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
+		self.start_maxed = start_maxed
 		self.at_prod_cap = False
 		self.produced = 0
 		
@@ -50,7 +51,7 @@ class Production:
 		self.base_prod = base_prod
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
-		self.mils = [Mil(date, prod_cap, prod_cap, fact_out), Mil(date, base_prod, prod_cap, fact_out)]
+		self.mils = [Mil(date, prod_cap, prod_cap, fact_out, start_maxed=True), Mil(date, base_prod, prod_cap, fact_out)]
 		self.dyd_out = dyd_out
 		self.dyds = [Dyd(date, dyd_out)]
 
