@@ -19,7 +19,10 @@ class Mil:
 		self.produced = 0
 
 	def __str__(self) -> str:
-		return f'Init Date: {self.init_date}, Maxed at start?: {self.maxed_at_start}'
+		if self.maxed_at_start == True:
+			return f'Init Date: {self.init_date} @ max efficiency'
+		else:
+			return f'Init Date: {self.init_date}'
 		
 	def daily_prod(self):
 		output_IC = self.fact_out * self.prod_eff * mil_base
@@ -118,8 +121,18 @@ class Production:
 		for mil in self.mils:
 			self.mils[mil] = 0
 
+	def get_prod(self):
+		return sum(mil.produced * self.mils[mil] for mil in self.mils)
+
+	def reset_prod(self):
+		for mil in self.mils:
+			mil.produced = 0
+
 	def report_mils(self):
 		for mil in self.mils:
 			if self.mils[mil] > 0:
-				print(mil, end=f' = {self.mils[mil]}\n')
+				print(f'{self.mils[mil]} x', mil, f'for {mil.produced} IC per Mil')
+		print(f'{self.get_prod()} total IC')
+
+	
 
