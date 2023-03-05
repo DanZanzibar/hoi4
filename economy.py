@@ -17,6 +17,9 @@ class Mil:
 		self.maxed_at_start = maxed_at_start
 		self.at_prod_cap = False
 		self.produced = 0
+
+	def __str__(self) -> str:
+		return f'Init Date: {self.init_date}, Maxed at start?: {self.maxed_at_start}'
 		
 	def daily_prod(self):
 		output_IC = self.fact_out * self.prod_eff * mil_base
@@ -51,19 +54,19 @@ class Production:
 		self.base_prod = base_prod
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
-		self.mils = [Mil(date, prod_cap, prod_cap, fact_out, maxed_at_start=True), Mil(date, base_prod, prod_cap, fact_out)]
+		self.mils = {Mil(date, prod_cap, prod_cap, fact_out, maxed_at_start=True): 0, Mil(date, base_prod, prod_cap, fact_out): 0}
 		self.dyd_out = dyd_out
-		self.dyds = [Dyd(date, dyd_out)]
+		self.dyds = {Dyd(date, dyd_out): 0}
 
 	def new_mil(self, curr_prod_eff=None):
 		if curr_prod_eff:
 			prod_eff = self.prod_cap if curr_prod_eff == 'max' else curr_prod_eff
 		else:
 			prod_eff = self.base_prod
-		self.mils.append(Mil(self.date, prod_eff, self.prod_cap, self.fact_out))
+		self.mils[Mil(self.date, prod_eff, self.prod_cap, self.fact_out)] = 0
 
 	def new_dyd(self):
-		self.dyds.append(Dyd(self.date, self.dyd_out))
+		self.dyds[Dyd(self.date, self.dyd_out)] = 0
 
 	def update_mods(self):
 		if self.date in self.bonus_sched:
@@ -98,3 +101,25 @@ class Production:
 		num_days = (new_date - self.date).days
 		for _ in range(num_days):
 			self.advance_day()
+
+	def add_tangible_mils(self, max_at_start, *tangible_mils: tuple[int, int, int]):
+		for mil in self.mils:
+			if mil.maxed_at_start == True:
+				self.mils[mil] += max_at_start
+		for tan_mil in tangible_mils:
+			quantity, year, month = tan_mil
+			mil_date = date(year + 1900, month, 1)
+			for mil in self.mils:
+				if mil_date == mil.init_date and mil.maxed_at_start == False:
+					self.mils[mil] += quantity
+					break
+
+	def reset_tangible_mils(self):
+		for mil in self.mils:
+			self.mils[mil] = 0
+
+	def report_mils(self):
+		for mil in self.mils:
+			if self.mils[mil] > 0:
+				print(mil, end=f' = {self.mils[mil]}\n')
+
