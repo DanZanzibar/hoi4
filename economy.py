@@ -1,4 +1,3 @@
-import forces
 from datetime import date, timedelta
 
 one_day_inc = timedelta(days=1)
@@ -105,10 +104,12 @@ class Production:
 		for _ in range(num_days):
 			self.advance_day()
 
-	def add_tangible_mils(self, max_at_start, *tangible_mils: tuple[int, int, int]):
-		for mil in self.mils:
-			if mil.maxed_at_start == True:
-				self.mils[mil] += max_at_start
+	def add_tangible_mils(self, max_at_start=None, *):
+		if max_at_start:
+			for mil in self.mils:
+				if mil.maxed_at_start == True:
+					self.mils[mil] += max_at_start
+					break
 		for tan_mil in tangible_mils:
 			quantity, year, month = tan_mil
 			mil_date = date(year + 1900, month, 1)
@@ -133,6 +134,9 @@ class Production:
 			if self.mils[mil] > 0:
 				print(f'{self.mils[mil]} x', mil, f'for {mil.produced} IC per Mil')
 		print(f'{self.get_prod()} total IC')
+		
+	def compare_mils(self):
+		
 
 	
 
