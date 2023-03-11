@@ -104,7 +104,7 @@ class Production:
 		for _ in range(num_days):
 			self.advance_day()
 
-	def add_tangible_mils(self, max_at_start=None, *):
+	def add_tangible_mils(self, max_at_start=None, *tangible_mils):
 		if max_at_start:
 			for mil in self.mils:
 				if mil.maxed_at_start == True:
