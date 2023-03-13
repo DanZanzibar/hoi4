@@ -56,9 +56,10 @@ class Production:
 		self.base_prod = base_prod
 		self.prod_cap = prod_cap
 		self.fact_out = fact_out
-		self.mils = {Mil(date, prod_cap, prod_cap, fact_out, maxed_at_start=True): 0, Mil(date, base_prod, prod_cap, fact_out): 0}
+		self.mils = {Mil(date, prod_cap, prod_cap, fact_out, maxed_at_start=True): 0}
 		self.dyd_out = dyd_out
 		self.dyds = {Dyd(date, dyd_out): 0}
+		self.init_args = (self.date, self.bonus_sched, self.base_prod, self.prod_cap, self.fact_out, self.dyd_out)
 
 	def new_mil(self, curr_prod_eff=None):
 		if curr_prod_eff:
@@ -91,7 +92,8 @@ class Production:
 						dyd.dyd_out = self.dyd_out
 			
 	def advance_day(self):
-		if self.date.day == 1: self.new_mil(self.base_prod)
+		if self.date.day == 1: 
+			self.new_mil(self.base_prod)
 		self.update_mods()
 		for mil in self.mils:
 			mil.daily_prod()
@@ -134,9 +136,9 @@ class Production:
 			if self.mils[mil] > 0:
 				print(f'{self.mils[mil]} x', mil, f'for {mil.produced} IC per Mil')
 		print(f'{self.get_prod()} total IC')
-		
-	def compare_mils(self):
-		
 
-	
-
+	def revert(self):
+		self.reset_prod()
+		self.reset_tangible_mils()
+		self.__init__(*self.init_args)
+		
